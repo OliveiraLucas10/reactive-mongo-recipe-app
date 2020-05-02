@@ -1,34 +1,29 @@
 package com.oliveiralucaspro.services;
 
-import com.oliveiralucaspro.commands.UnitOfMeasureCommand;
-import com.oliveiralucaspro.converters.UnitOfMeasureToUnitOfMeasureCommand;
-import com.oliveiralucaspro.repositories.UnitOfMeasureRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import com.oliveiralucaspro.commands.UnitOfMeasureCommand;
+import com.oliveiralucaspro.converters.UnitOfMeasureToUnitOfMeasureCommand;
+import com.oliveiralucaspro.repositories.reactive.UnitOfMeasureReactiveRepository;
 
-/**
- * Created by jt on 6/28/17.
- */
+import lombok.RequiredArgsConstructor;
+import reactor.core.publisher.Flux;
+
 @Service
+@RequiredArgsConstructor
 public class UnitOfMeasureServiceImpl implements UnitOfMeasureService {
 
-    private final UnitOfMeasureRepository unitOfMeasureRepository;
+    private final UnitOfMeasureReactiveRepository unitOfMeasureReactiveRepository;
     private final UnitOfMeasureToUnitOfMeasureCommand unitOfMeasureToUnitOfMeasureCommand;
 
-    public UnitOfMeasureServiceImpl(UnitOfMeasureRepository unitOfMeasureRepository, UnitOfMeasureToUnitOfMeasureCommand unitOfMeasureToUnitOfMeasureCommand) {
-        this.unitOfMeasureRepository = unitOfMeasureRepository;
-        this.unitOfMeasureToUnitOfMeasureCommand = unitOfMeasureToUnitOfMeasureCommand;
-    }
-
     @Override
-    public Set<UnitOfMeasureCommand> listAllUoms() {
+    public Flux<UnitOfMeasureCommand> listAllUoms() {
 
-        return StreamSupport.stream(unitOfMeasureRepository.findAll()
-                .spliterator(), false)
-                .map(unitOfMeasureToUnitOfMeasureCommand::convert)
-                .collect(Collectors.toSet());
+	return unitOfMeasureReactiveRepository.findAll().map(unitOfMeasureToUnitOfMeasureCommand::convert);
+
+//        return StreamSupport.stream(unitOfMeasureRepository.findAll()
+//                .spliterator(), false)
+//                .map(unitOfMeasureToUnitOfMeasureCommand::convert)
+//                .collect(Collectors.toSet());
     }
 }

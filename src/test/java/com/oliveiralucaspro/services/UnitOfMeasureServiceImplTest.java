@@ -1,19 +1,25 @@
 package com.oliveiralucaspro.services;
 
-import com.oliveiralucaspro.commands.UnitOfMeasureCommand;
-import com.oliveiralucaspro.converters.UnitOfMeasureToUnitOfMeasureCommand;
-import com.oliveiralucaspro.domain.UnitOfMeasure;
-import com.oliveiralucaspro.repositories.UnitOfMeasureRepository;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.HashSet;
-import java.util.Set;
+import com.oliveiralucaspro.commands.UnitOfMeasureCommand;
+import com.oliveiralucaspro.converters.UnitOfMeasureToUnitOfMeasureCommand;
+import com.oliveiralucaspro.domain.UnitOfMeasure;
+import com.oliveiralucaspro.repositories.reactive.UnitOfMeasureReactiveRepository;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
+import reactor.core.publisher.Flux;
 
 public class UnitOfMeasureServiceImplTest {
 
@@ -21,35 +27,35 @@ public class UnitOfMeasureServiceImplTest {
     UnitOfMeasureService service;
 
     @Mock
-    UnitOfMeasureRepository unitOfMeasureRepository;
+    UnitOfMeasureReactiveRepository unitOfMeasureReactiveRepository;
 
     @Before
     public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
+	MockitoAnnotations.initMocks(this);
 
-        service = new UnitOfMeasureServiceImpl(unitOfMeasureRepository, unitOfMeasureToUnitOfMeasureCommand);
+	service = new UnitOfMeasureServiceImpl(unitOfMeasureReactiveRepository, unitOfMeasureToUnitOfMeasureCommand);
     }
 
     @Test
     public void listAllUoms() throws Exception {
-        //given
-        Set<UnitOfMeasure> unitOfMeasures = new HashSet<>();
-        UnitOfMeasure uom1 = new UnitOfMeasure();
-        uom1.setId("1");
-        unitOfMeasures.add(uom1);
+	// given
+	Set<UnitOfMeasure> unitOfMeasures = new HashSet<>();
+	UnitOfMeasure uom1 = new UnitOfMeasure();
+	uom1.setId("1");
+	unitOfMeasures.add(uom1);
 
-        UnitOfMeasure uom2 = new UnitOfMeasure();
-        uom2.setId("2");
-        unitOfMeasures.add(uom2);
+	UnitOfMeasure uom2 = new UnitOfMeasure();
+	uom2.setId("2");
+	unitOfMeasures.add(uom2);
 
-        when(unitOfMeasureRepository.findAll()).thenReturn(unitOfMeasures);
+	when(unitOfMeasureReactiveRepository.findAll()).thenReturn(Flux.just(uom1, uom2));
 
-        //when
-        Set<UnitOfMeasureCommand> commands = service.listAllUoms();
+	// when
+	List<UnitOfMeasureCommand> commands = service.listAllUoms().collectList().block();
 
-        //then
-        assertEquals(2, commands.size());
-        verify(unitOfMeasureRepository, times(1)).findAll();
+	// then
+	assertEquals(2, commands.size());
+	verify(unitOfMeasureReactiveRepository, times(1)).findAll();
     }
 
 }
