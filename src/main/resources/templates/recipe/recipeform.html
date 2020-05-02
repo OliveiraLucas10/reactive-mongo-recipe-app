@@ -99,7 +99,7 @@
 										<label>Difficulty:</label> <select class="form-control"
 											th:field="*{difficulty}">
 											<option
-												th:each="difficultyValue : ${T(com.oliveiralucaspro.domain.Difficulty).values()}"
+												th:each="difficultyValue : ${T(guru.springframework.domain.Difficulty).values()}"
 												th:value="${difficultyValue.name()}"
 												th:text="${difficultyValue.name()}">val
 											</option>
