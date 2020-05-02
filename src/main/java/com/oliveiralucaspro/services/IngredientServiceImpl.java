@@ -13,32 +13,27 @@ import com.oliveiralucaspro.repositories.RecipeRepository;
 import com.oliveiralucaspro.repositories.reactive.RecipeReactiveRepository;
 import com.oliveiralucaspro.repositories.reactive.UnitOfMeasureReactiveRepository;
 
-import lombok.RequiredArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
-/**
- * Created by jt on 6/28/17.
- */
 @Slf4j
 @Service
-@RequiredArgsConstructor
+@AllArgsConstructor
 public class IngredientServiceImpl implements IngredientService {
 
     private final IngredientToIngredientCommand ingredientToIngredientCommand;
     private final IngredientCommandToIngredient ingredientCommandToIngredient;
     private final RecipeReactiveRepository recipeReactiveRepository;
-    private final RecipeRepository recipeRepository;
     private final UnitOfMeasureReactiveRepository unitOfMeasureRepository;
+    private final RecipeRepository recipeRepository;
 
     @Override
     public Mono<IngredientCommand> findByRecipeIdAndIngredientId(String recipeId, String ingredientId) {
 
-	return recipeReactiveRepository.findById(recipeId)
-		.map(recipe -> recipe.getIngredients().stream()
-			.filter(ingredient -> ingredient.getId().equalsIgnoreCase(ingredientId)).findFirst())
-		.filter(Optional::isPresent).map(ingredient -> {
-		    IngredientCommand command = ingredientToIngredientCommand.convert(ingredient.get());
+	return recipeReactiveRepository.findById(recipeId).flatMapIterable(Recipe::getIngredients)
+		.filter(ingredient -> ingredient.getId().equalsIgnoreCase(ingredientId)).single().map(ingredient -> {
+		    IngredientCommand command = ingredientToIngredientCommand.convert(ingredient);
 		    command.setRecipeId(recipeId);
 		    return command;
 		});
