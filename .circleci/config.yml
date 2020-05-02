@@ -38,8 +38,8 @@ jobs:
             - ~/.m2
           key: v1-dependencies-{{ checksum "build.gradle" }}
 
-      # run tests! and gen code coverage
-      - run: ./gradlew clean test jacocoTestReport
+      # run tests!
+      - run: ./gradlew clean test
 
       - run:
           name: Save test results
@@ -54,6 +54,6 @@ jobs:
       - store_artifacts:
           path: ~/junit
 
-      - run:
-          name: Send to CodeCov
-          command: bash <(curl -s https://codecov.io/bash)
+#      - run:
+#          name: Send to CodeCov
+#          command: bash <(curl -s https://codecov.io/bash)
