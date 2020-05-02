@@ -2,10 +2,9 @@ package com.oliveiralucaspro.services;
 
 import org.springframework.web.multipart.MultipartFile;
 
-/**
- * Created by jt on 7/3/17.
- */
+import reactor.core.publisher.Mono;
+
 public interface ImageService {
 
-    void saveImageFile(String recipeId, MultipartFile file);
+    Mono<Void> saveImageFile(String recipeId, MultipartFile file);
 }

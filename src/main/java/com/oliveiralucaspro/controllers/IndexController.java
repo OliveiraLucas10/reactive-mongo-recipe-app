@@ -1,14 +1,13 @@
 package com.oliveiralucaspro.controllers;
 
-import com.oliveiralucaspro.services.RecipeService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-/**
- * Created by jt on 6/1/17.
- */
+import com.oliveiralucaspro.services.RecipeService;
+
+import lombok.extern.slf4j.Slf4j;
+
 @Slf4j
 @Controller
 public class IndexController {
@@ -23,7 +22,7 @@ public class IndexController {
     public String getIndexPage(Model model) {
         log.debug("Getting Index page");
 
-        model.addAttribute("recipes", recipeService.getRecipes());
+        model.addAttribute("recipes", recipeService.getRecipes().collectList().block());
 
         return "index";
     }
