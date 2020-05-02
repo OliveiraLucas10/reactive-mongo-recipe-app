@@ -1,10 +1,12 @@
 package com.oliveiralucaspro.repositories.reactive;
 
-import com.oliveiralucaspro.domain.UnitOfMeasure;
 import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 
-/**
- * Created by jt on 8/17/17.
- */
+import com.oliveiralucaspro.domain.UnitOfMeasure;
+
+import reactor.core.publisher.Mono;
+
 public interface UnitOfMeasureReactiveRepository extends ReactiveMongoRepository<UnitOfMeasure, String> {
+
+    Mono<UnitOfMeasure> findByDescription(String description);
 }
