@@ -7,7 +7,7 @@ jobs:
   build:
     docker:
       # specify the version you desire here
-      - image: circleci/openjdk:11-browsers-legacy
+      - image: circleci/openjdk:8-jdk
 
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images
@@ -38,8 +38,8 @@ jobs:
             - ~/.m2
           key: v1-dependencies-{{ checksum "build.gradle" }}
 
-      # run tests!
-      - run: gradle test
+      # run tests! and gen code coverage
+      - run: ./gradlew clean test jacocoTestReport
 
       - run:
           name: Save test results
@@ -54,6 +54,6 @@ jobs:
       - store_artifacts:
           path: ~/junit
 
-#      - run:
-#          name: Send to CodeCov
-#          command: bash <(curl -s https://codecov.io/bash)
+      - run:
+          name: Send to CodeCov
+          command: bash <(curl -s https://codecov.io/bash)
